@@ -29,7 +29,7 @@ kubectl -n devops get po -o wide
 ```
 Create pod in finance namespace
 ```
-kubectl -n finance run pod2 --image centos -- sleep 7000
+kubectl -n finance run pod2 --image centos:8 -- sleep 7000
 ```
 Verify the pod in the finance namespace
 ```
