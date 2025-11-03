@@ -8,9 +8,9 @@ This lab will guide you through deploying a **Kubernetes cluster (v1.32)** using
 
 Login to your **AWS Console** and create the following instances:
 
-| Count | Instance Type | OS Version          | Storage | Description |
-|--------|----------------|---------------------|----------|--------------|
-| 3      | t2.medium       | Ubuntu 22.04 LTS    | 10 GB    | 1 Master + 2 Worker Nodes |
+    | Count | Instance Type | OS Version          | Storage | Description |
+    |--------|----------------|---------------------|----------|--------------|
+    | 3      | t2.medium       | Ubuntu 22.04 LTS    | 10 GB    | 1 Master + 2 Worker Nodes |
 
 ### 🔒 Security Group Configuration
 
