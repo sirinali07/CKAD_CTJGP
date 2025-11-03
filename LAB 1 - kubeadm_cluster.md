@@ -8,21 +8,21 @@ This lab will guide you through deploying a **Kubernetes cluster (v1.32)** using
 
 Login to your **AWS Console** and create the following instances:
 
-    | Count | Instance Type | OS Version          | Storage | Description |
-    |--------|----------------|---------------------|----------|--------------|
-    | 3      | t2.medium       | Ubuntu 22.04 LTS    | 10 GB    | 1 Master + 2 Worker Nodes |
+| Count | Instance Type | OS Version          | Storage | Description |
+|--------|----------------|---------------------|----------|--------------|
+| 3      | t2.medium       | Ubuntu 22.04 LTS    | 10 GB    | 1 Master + 2 Worker Nodes |
 
 ### 🔒 Security Group Configuration
 
 Instead of opening all ports, only open the following **Custom TCP** ports:
 
-    |      Nodes	      |    Port Number	 |         Use Case                       |
-    |---------------------|------------------|----------------------------------------|
-    | Master, Workers	  |    `2379-2380`   |  Etcd Client API / Server API          |
-    | Master              |       `6443`  	 |  Kubernetes API Server (Secure Port)   |
-    | Master, Workers     |   `6782-6784`    |  Weave Net Server/Client API #CNI      |
-    | Master, Workers     |   `10248-10259`	 |  Kubelet Communication                 |
-    | Workers             |   `30000-32767`	 |  Reserved of NodePort IPs              |	   
+|      Nodes	      |    Port Number	 |         Use Case                       |
+|---------------------|------------------|----------------------------------------|
+| Master, Workers	  |    `2379-2380`   |  Etcd Client API / Server API          |
+| Master              |       `6443`  	 |  Kubernetes API Server (Secure Port)   |
+| Master, Workers     |   `6782-6784`    |  Weave Net Server/Client API #CNI      |
+| Master, Workers     |   `10248-10259`	 |  Kubelet Communication                 |
+| Workers             |   `30000-32767`	 |  Reserved of NodePort IPs              |	   
 
 
 
