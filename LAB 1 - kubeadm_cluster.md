@@ -14,12 +14,12 @@ To begin, log in to AWS Console.
     | Master, Workers	  |    `2379-2380`   |  Etcd Client API / Server API          |
     | Master              |       `6443`  	 |  Kubernetes API Server (Secure Port)   |
     | Master, Workers     |   `6782-6784`    |  Weave Net Server/Client API #CNI      |
-    | Master, Workers     |   `10250-10259`	 |  Kubelet Communication                 |
+    | Master, Workers     |   `10248-10259`	 |  Kubelet Communication                 |
     | Workers             |   `30000-32767`	 |  Reserved of NodePort IPs              |	   
 
 
 
-### Task-2: Setting up Machines
+### Task 2: Setting up Machines
 
 * All steps in this task are to be performed on all the machines
 * Connect all VMs with putty.
@@ -69,107 +69,199 @@ hostnamectl set-hostname Node2
 ```
 bash
 ```
+#### 🧩 Install the core Kubernetes components and container runtime
+> This step installs:
+> - **kubeadm :** for cluster bootstrapping
+> - **kubelet :** the node agent that runs pods
+> - **kubectl :** the command-line tool to manage the cluster
+> - **cri-o   :** lightweight container runtime optimized for Kubernetes
+
+**Variables**
+
+```bash
+KUBERNETES_VERSION=v1.32
+CRIO_VERSION=v1.32
+```
+
+**⚙️Install Dependencies for adding repositories**
+
+```bash
+apt-get update
+```
+```bash
+apt-get install -y software-properties-common curl
+```
+
+**📦 Add Kubernetes Repository**
+```bash
+curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key |
+    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+```
+```bash
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" |
+    tee /etc/apt/sources.list.d/kubernetes.list
+```
+
+**🐧 Add CRI-O Repository**
+```bash
+curl -fsSL https://download.opensuse.org/repositories/isv:/cri-o:/stable:/$CRIO_VERSION/deb/Release.key |
+    gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+```
+```bash
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://download.opensuse.org/repositories/isv:/cri-o:/stable:/$CRIO_VERSION/deb/ /" |
+    tee /etc/apt/sources.list.d/cri-o.list
+```
+
+**🧩 Install the packages**
+```bash
+apt-get update
+```
+```bash
+apt-get install -y cri-o kubelet kubeadm kubectl
+```
+**🔥 Start and Verify CRI-O**
+```bash
+systemctl start crio.service
+```
+**Check installed versions:**
+
+```bash
+kubeadm version
+```
+```bash
+kubectl version
+```
+```bash
+kubelet --version
+```
+```bash
+crio version
+```
+
+**🚫 Disable Swap & Configure Networking**
+
+```bash
+swapoff -a
+modprobe br_netfilter
+sysctl -w net.ipv4.ip_forward=1
+```
+
 
 
 ### Task 3: Initializing the Cluster
 
+> Run this on the **master node only**
 
-Start kubeadm only on **master**
-
-```
+```bash
 kubeadm init --ignore-preflight-errors=all
 ```
-If the it runs successfully, it will provide a join command which can be used to join the master. Make a note of the highlighted part.
-Run the following commands to configure kubectl on master.
-```
+> If the initialization completes successfully, it will display a **join command** that can be used by worker nodes to connect to the master.
+Make sure to **note down the highlighted join command**.
+Next, run the following commands to configure `kubectl` on the master node.
+
+```bash
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config 
 chown $(id -u):$(id -g) $HOME/.kube/config
 ```
- 
+
 ### Task 4: Joining a Cluster
 
-Run the kubeadm join command in **worker nodes**, that was previously noted from the master node in the previous task.
+On each **worker node**, run the `kubeadm join` command that was displayed on the master node during the `kubeadm init` process.
 
+```bash
+kubeadm join --token <your_token> --discovery-token-ca-cert-hash <your_discovery_token>
 ```
-kubeadm join --token <your_token> --discovery-token-ca-cert- hash <your_discovery_token> 
-```
-**Note
-If you want to list and generate tokens again to join worker nodes, then follow the below steps(optional)
-```
-kubeadm token list
-kubeadm token create  --print-join-command
-```
+> i.e kubeadm join 172.31.28.41:6443 --token ckj3o6.afub3lnqg62ulqek  --discovery-token-ca-cert-hash sha256:ad9cf556679b25609cba17eef5a7cc45fed04b2c2be9f776e33ef03876c4da36 --ignore-preflight-errors=all
 
-View node information on the **master**
+**💡 Note:** If you need to regenerate the join token, run the following commands on the master node:
+
+```bash
+kubeadm token create --print-join-command
 ```
+Once the worker nodes have successfully joined, verify the node status on the **master node:**
+
+```bash
 kubectl get nodes
 ```
 
 ### Task 5: Deploy Container Networking Interface
-Go to **master** node and 
-Apply weave CNI (Container Network Interface) as shown below:
-```
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
-```
-(reference link1:- https://www.weave.works/docs/net/latest/kubernetes/kube-addon/)
 
-View nodes to see that they are ready.
+Now, apply the Weave Net CNI plugin from the master node to enable pod-to-pod communication.
+
+```bash
+kubectl apply -f https://reweave.azurewebsites.net/k8s/v1.29/net.yaml
 ```
+
+**📘 Reference:**
+[Weaveworks CNI Documentation](https://github.com/rajch/weave#using-weave-on-kubernetes)
+
+**✅ Verify the Setup**
+
+Check the node status — all nodes should be in the **Ready** state:
+```bash
 kubectl get nodes
 ```
 
-View all Pods including system Pods and see that dns and weave are running.
-```
-kubectl get pod -n kube-system
+Check that all system pods (including DNS and Weave) are running:
+```bash
+kubectl get pods -n kube-system
 ```
 
 ### Task 6: Create Pods
-To check the API version of any resource
-```
-kubectl api-resources
-```
 
-Create a Pod called http based on a Docker image on the master.
-```
+Create a pod named httpd using the Apache HTTP Server image:
+
+```bash
 kubectl run httpd --image=httpd
 ```
 
-View the status of Pod and make sure it’s in the running state.
-```
+Ensure the pod is in a Running state:
+```bash
 kubectl get pods
 ```
 
-Get a shell to the container in the Pod using the Pod name from the previous step.
-```
-kubectl exec -it <pod_name> -- /bin/bash
-``` 
+Access the Pod Container
 
-Install curl in the container
+Open an interactive shell session inside the container:
+
+```bash
+kubectl exec -it <pod_name> -- /bin/bash
 ```
+Install and Test Curl Inside the Container
+
+```bash
 apt update
+```
+```bash
 apt install curl -y
 ```
-
-Run curl on the localhost (container) to verify the http installation.
+```bash
+curl localhost
 ```
-curl localhost 
+```bash
 exit
 ```
+You should see a response from the Apache HTTP Server, confirming successful deployment.
 
-If you get the below `error` when running kubectl commands, execute the command given below.
+## ⚠️ Troubleshooting
 
-`The connection to the server localhost:8080 was refused - did you specify the right host or port?`
+If you encounter the following error while running `kubectl` commands:
+```pgsql
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
 ```
+
+Run the command below to configure the correct Kubernetes context:
+```bash
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
 
-#### *** DO NOT EXECUTE THE BELOW COMMAND UNTIL DOUBLY SURE ***
-To remove the joins in your cluster
-```
+## ⚙️ Cluster Reset (Use with Caution)
+
+> ⚠️ Warning:
+> The following command will remove all nodes and reset your cluster configuration.
+> Execute only if you are certain.
+
+```bash
 kubeadm reset
 ```
-
-
- 
-
