@@ -277,3 +277,17 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 ```bash
 kubeadm reset
 ```
+
+---
+
+## 📚 Additional Reference
+
+If you’d like to explore the **latest official steps** and updates for setting up Kubernetes with **CRI-O**,  
+please visit the official CRI-O website:  
+
+🔗 **[https://cri-o.io/](https://cri-o.io/)**
+
+---
+
+**End of Lab — Happy Learning! 🚀**
+
