@@ -1,14 +1,21 @@
-## Bootstrap a Kubernetes Cluster using Kubeadm
+# 🚀 Bootstrap a Kubernetes Cluster using Kubeadm & CRI-O
 
-To begin, log in to AWS Console.
+This lab will guide you through deploying a **Kubernetes cluster (v1.32)** using **CRI-O (v1.32)** as the container runtime on AWS EC2 instances.
 
-### Task 1: Launching Instances on AWS
+---
 
-* `3` instances of `t2.medium` instance with OS version as `Ubuntu 22.04 LTS` in your preferred region.
-* `Storage : 10 GB`
-* Instead of opening all ports you can open these ports internally.
-* `Type : Custom TCP`
-* `Source type : Anywhere`
+## 🧱 Task 1: Launch Instances on AWS
+
+Login to your **AWS Console** and create the following instances:
+
+| Count | Instance Type | OS Version          | Storage | Description |
+|--------|----------------|---------------------|----------|--------------|
+| 3      | t2.medium       | Ubuntu 22.04 LTS    | 10 GB    | 1 Master + 2 Worker Nodes |
+
+### 🔒 Security Group Configuration
+
+Instead of opening all ports, only open the following **Custom TCP** ports:
+
     |      Nodes	      |    Port Number	 |         Use Case                       |
     |---------------------|------------------|----------------------------------------|
     | Master, Workers	  |    `2379-2380`   |  Etcd Client API / Server API          |
@@ -19,19 +26,23 @@ To begin, log in to AWS Console.
 
 
 
-### Task 2: Setting up Machines
+## ⚙️ Task 2: Setting up Machines
 
-* All steps in this task are to be performed on all the machines
-* Connect all VMs with putty.
-Switch to root.
-```
+All steps in this task must be performed on **all the nodes**.
+
+### 🔗 Connect to Instances
+
+Use **PuTTY** (or any SSH client) to connect to each instance and switch to root:
+
+```bash
 sudo su
 ```
-Rename the VM's as Master, Node1 and Node2 from the AWS Console.
+
+#### 🏷️ Rename the VM's as Master, Node1 and Node2 
 
 Set the hostname to all three nodes as master, Node1, and Node2 in their respective terminals for easy understanding, by running the below command:
 
-Connect to Master.
+**Connect to Master.**
 
 Switch to root.
 ```
@@ -44,7 +55,7 @@ hostnamectl set-hostname Master
 bash
 ```
 
-Connect to Node1.
+**Connect to Node1.**
 
 Switch to root.
 ```
@@ -57,7 +68,7 @@ hostnamectl set-hostname Node1
 bash
 ```
 
-Connect to Node2.
+**Connect to Node2.**
 
 Switch to root.
 ```
@@ -69,6 +80,7 @@ hostnamectl set-hostname Node2
 ```
 bash
 ```
+
 #### 🧩 Install the core Kubernetes components and container runtime
 > This step installs:
 > - **kubeadm :** for cluster bootstrapping
