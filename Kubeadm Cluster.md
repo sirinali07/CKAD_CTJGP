@@ -77,7 +77,7 @@ sysctl -w net.ipv4.ip_forward=1
 
 
 ### 🧭 Initialize Master Node
-> Run this on the master node only
+> Run this on the **master node only**
 
 ```bash
 kubeadm init --ignore-preflight-errors=all
@@ -100,7 +100,8 @@ kubeadm join --token <your_token> --discovery-token-ca-cert-hash <your_discovery
 ```
 > i.e kubeadm join 172.31.28.41:6443 --token ckj3o6.afub3lnqg62ulqek  --discovery-token-ca-cert-hash sha256:ad9cf556679b25609cba17eef5a7cc45fed04b2c2be9f776e33ef03876c4da36 --ignore-preflight-errors=all
 
-**💡 Note:** If you need to view or regenerate the join token, run the following commands on the master node:
+**💡 Note:** If you need to regenerate the join token, run the following commands on the master node:
+
 ```bash
 kubeadm token create --print-join-command
 ```
@@ -132,7 +133,7 @@ Check that all system pods (including DNS and Weave) are running:
 kubectl get pods -n kube-system
 ```
 
-###🐳 Create and Test Pods
+### 🐳 Create and Test the Pod
 
 Create a pod named httpd using the Apache HTTP Server image:
 
@@ -148,10 +149,12 @@ kubectl get pods
 Access the Pod Container
 
 Open an interactive shell session inside the container:
+
 ```bash
 kubectl exec -it <pod_name> -- /bin/bash
 ```
 Install and Test Curl Inside the Container
+
 ```bash
 apt update
 ```
@@ -183,6 +186,7 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 > ⚠️ Warning:
 > The following command will remove all nodes and reset your cluster configuration.
 > Execute only if you are certain.
+
 ```bash
 kubeadm reset
 ```
