@@ -110,5 +110,10 @@ To explore all available flags and options for the kubectl top command:
 ```bash
 kubectl top pod --help
 ```
+---
+## 📚 Official References
 
+[🌐 Kubernetes Metrics Server (GitHub)](🔗https://github.com/kubernetes-sigs/metrics-server)
+
+[📖 Kubernetes Official Docs — Resource Metrics Pipeline](🔗 https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/)
 
