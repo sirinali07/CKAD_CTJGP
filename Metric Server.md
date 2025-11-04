@@ -113,8 +113,8 @@ kubectl top pod --help
 ---
 ## 📚 Official References
 
-[🌐 Kubernetes Metrics Server (GitHub)](🔗https://github.com/kubernetes-sigs/metrics-server)
+[🌐 Kubernetes Metrics Server (GitHub)](https://github.com/kubernetes-sigs/metrics-server)
 
 
-[📖 Kubernetes Official Docs — Resource Metrics Pipeline](🔗 https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/)
+[📖 Kubernetes Official Docs — Resource Metrics Pipeline](https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/)
 
