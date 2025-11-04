@@ -1,103 +1,165 @@
-### Task 1: Installing Helm 3 in Kubernetes
-setting up Helm on Kubernetes
-Run the following command to update the packages:
-```
+# 🪄 Helm 3 & WordPress Deployment on Kubernetes - LAB Guide
+
+> 💡 **Objective:**  
+> In this lab, you will learn how to **install Helm 3**, configure it with your Kubernetes cluster, and deploy a **WordPress application** using the **Bitnami Helm chart**.
+
+---
+
+## 📘 What is Helm?
+
+**Helm** is the **package manager for Kubernetes**, similar to how `apt` or `yum` work for Linux.  
+It allows you to define, install, and upgrade even the most complex Kubernetes applications using **Helm charts** — preconfigured YAML templates.
+
+### ⚙️ Helm Concepts
+
+| Term | Description |
+|------|--------------|
+| **Chart** | A Helm package containing Kubernetes manifests |
+| **Repository** | A collection of Helm charts (like Bitnami) |
+| **Release** | A running instance of a chart in a Kubernetes cluster |
+
+📦 **In short:** Helm = Kubernetes + Simplicity 🎯
+
+---
+
+## ### 🧩 Task 1: Installing Helm 3 on Kubernetes
+
+### 🔹 Step 1: Update System Packages
+```bash
 apt update
 ```
+🔹 Step 2: Download Helm Binary
+
 Download the Helm binary for Linux 386 architecture:
-```
+```bash
 wget https://get.helm.sh/helm-v3.11.3-linux-386.tar.gz
 ```
-Unpack the downloaded tarball: 
-```
+🔹 Step 3: Extract the Tarball
+```bash
 tar -xvzf helm-v3.11.3-linux-386.tar.gz
 ```
-Check the contents of the extracted directory to ensure that the Helm binary is present:
-```
+🔹 Step 4: Verify Extraction
+
+Check the extracted files to ensure Helm binary exists:
+```bash
 ls
 ```
-Move the Helm executable to the /bin directory to make it accessible system-wide:
- 
-```
+🔹 Step 5: Move Helm Binary to /bin
+
+Make Helm accessible system-wide:
+```bash
 mv linux-386/helm /bin/
 ```
-Confirm that Helm is installed correctly by checking its version:
-```
-helm version
-```
-### Task 2: Install Wordpress chart using Helm
 
-To check the version of Helm installed
-```
+🔹 Step 6: Verify Installation
+
+Confirm Helm is installed correctly:
+```bash
 helm version
 ```
-To add a Helm chart repository to your local environment. Below we are adding two Helm Chart Repositories.
+
+✅ Output Example:
+
+version.BuildInfo{Version:"v3.11.3", GitCommit:"...", GoVersion:"go1.20"}
+
+### 🌐 Task 2: Install WordPress using Helm
+🔹 Step 1: Verify Helm Installation
+```bash
+helm version
 ```
-helm repo add bitnami https://charts.bitnami.com/bitnami 
+
+🔹 Step 2: Add Bitnami Helm Repository
+
+Add the official Bitnami charts repository:
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
-To list the Helm chart repositories configured in your local environment.
-```
+🔹 Step 3: Verify Repositories
+```bash
 helm repo list
 ```
-To install the WordPress application using the Bitnami Helm chart with the release name my-wordpress
-```
+
+🔹 Step 4: Install WordPress Chart
+
+Install the WordPress application with the release name my-wordpress:
+
+```bash
 helm install my-wordpress bitnami/wordpress
 ```
-To list all the releases currently installed on your Kubernetes cluster
-```
+🔹 Step 5: List Helm Releases
+```bash
 helm list
 ```
-
-
-#### Verify that WordPress has been set up 
-
-```
+🧾 Verification Steps
+🔹 Step 1: Check Kubernetes Resources
+```bash
 kubectl get all
 ```
-Verify that the pods are running
-```
+🔹 Step 2: Verify Pods
+
+Ensure all pods are running:
+
+```bash
 kubectl get pods
 ```
 
-Also Notice that the front end of wordpress are part of deployment
-```
+🔹 Step 3: Verify Deployment
+
+Check if the frontend WordPress pods are part of a deployment:
+```bash
 kubectl get deploy
 ```
-View the services using the below commands. Make note of the EXTERNAL IP of the LoadBalancer service(If LoadBalancer is integrated with Cluster)
-```
+
+🔹 Step 4: Verify Services
+```bash
 kubectl get svc
 ```
-Change the type of wordpress service to ***NodePort***
-```
+
+If your cluster supports LoadBalancer, note the EXTERNAL-IP to access WordPress.
+
+⚙️ Modify Service Type (Optional)
+
+Change the WordPress service type from LoadBalancer to NodePort:
+```bash
 kubectl edit svc my-wordpress
 ```
-verify the changes
-```
+
+Then verify the changes:
+```bash
 kubectl get svc
 ```
-Open the browser and paste the Public Ip of the Node along with service nodePort noted on the previous step. Observe that the WordPress site is up and running
-> http://<Public-IP-of-the-Node>:<NodePort>
-> i.e.. http://3.85.9.5:32123
 
-#### Cleanup
-List the current helm release and delete it
+🌍 Access WordPress:
+
+```bash
+http://<Public-IP-of-Node>:<NodePort>
 ```
+> e.g. http://3.85.9.5:32123
+
+### 🧹 Cleanup
+
+🔹 Step 1: List Installed Helm Releases
+```bash
 helm ls
 ```
+🔹 Step 2: Uninstall WordPress
 
-To uninstall the WordPress application deployed using Helm with the release name my-wordpress
-```
+Remove the release:
+```bash
 helm uninstall my-wordpress
 ```
-```
+
+🔹 Step 3: Confirm Deletion
+```bash
 helm ls
 ```
- To remove a Helm repository from your local Helm client configuration
-```
+🔹 Step 4: Remove Repository
+```bash
 helm repo remove bitnami
 ```
-To remove Helm package manager
-```
+
+🔹 Step 5: Remove Helm (Optional)
+```bash
 sudo apt-get remove helm
 ```
  
