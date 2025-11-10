@@ -22,8 +22,8 @@ You can define a **Security Context** at two levels:
 |--------------|------------------|--------------|
 | `runAsUser` | Runs the container as a specific Linux user ID (not root) | `runAsUser: 1000` |
 | `runAsGroup` | Sets the group ID for files created by the container | `runAsGroup: 3000` |
-| `runAsNonRoot` | Makes sure the container doesn’t run as root | `runAsNonRoot: true` |
-| `readOnlyRootFilesystem` | Makes the container filesystem read-only | `readOnlyRootFilesystem: true` |
+| `fsGroup` | Sets the file system group ID for mounted volumes, so files are accessible to the group | `fsGroup: 2000` |
+| `capabilities` | Adds or removes specific Linux kernel capabilities (fine-grained permissions) | `add: ["NET_ADMIN"], drop: ["ALL"]` |
 | `allowPrivilegeEscalation` | Prevents a process from gaining more privileges | `allowPrivilegeEscalation: false` |
 | `privileged` | Gives full root access (avoid unless absolutely needed) | `privileged: true` |
 
