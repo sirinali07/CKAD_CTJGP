@@ -1,5 +1,62 @@
-## Network Policy
 
+## 🌐 Network Policy in Kubernetes
+
+
+A **Network Policy** in Kubernetes is used to **control communication** between Pods.  
+
+It works like a **firewall inside the cluster**, deciding which Pods can talk to each other and to the outside world.
+
+By default — **all Pods can communicate freely**.  
+
+Once a Network Policy is applied, only the **allowed** traffic is permitted; everything else is **blocked**.
+
+### 🎯 Why We Need It
+- To **secure Pod-to-Pod communication**
+- To **limit access** between applications
+- To **reduce attack surface** inside the cluster
+
+### 🔁 Direction Summary
+
+| **Policy Type** | **Controls Traffic** | **Traffic Direction** | **Common Use Case** |
+|------------------|-----------------------|------------------------|----------------------|
+| **Ingress** | Incoming connections | From → Pod | Allow only frontend → backend traffic |
+| **Egress** | Outgoing connections | Pod → Destination | Allow backend → database or external APIs |
+
+### ⚙️ Key Components
+
+| **Component** | **Description** |
+|----------------|------------------|
+| `podSelector` | Selects the Pods that the policy applies to |
+| `policyTypes` | Defines whether the policy controls **Ingress** (incoming) or **Egress** (outgoing) traffic |
+| `ingress` | Rules for incoming traffic |
+| `egress` | Rules for outgoing traffic |
+| `namespaceSelector` | Selects Pods in other namespaces |
+| `ipBlock` | Allows or denies traffic from specific IP address ranges |
+
+---
+
+### 🧩 Example: Allow Only Frontend → Backend Traffic
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+
+
+---
 ### Task 1: Check the network connectivity between pods in different namespaces
 Create 2 namespaces
 ```
