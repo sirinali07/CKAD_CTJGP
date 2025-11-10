@@ -1,4 +1,22 @@
-## Security Context
+## 🧩 Security Context
+
+A **Security Context** in Kubernetes tells the cluster how a `Pod` or `Container` should run securely — like what user it runs as, what permissions it has, and whether it can change system settings.
+
+By default, containers might run as root, which is *risky*.
+
+Security Context helps you:
+  * Avoid giving unnecessary permissions
+  * Protect your files and data
+  * Control how much power your containers have
+
+You can define a **Security Context** at two levels:
+
+|      Level	      |    Applies To	 |         Example                      |
+|---------------------|------------------|----------------------------------------|
+| Pod level	  |    All containers inside the Pod   |  `spec.securityContext`          |
+| Container level              |       Only that specific container  	 |  `containers[].securityContext`   |
+ 
+
 
 ### Task 1: Set the security context for a Pod
 
@@ -78,52 +96,7 @@ From the output, you can see that gid is 3000 which is same as the runAsGroup fi
 ```
 exit
 ```
-### Task 2: Set the security context for a container
-
-To specify security settings for a Container, include the securityContext field in the Container manifest. 
-
-Security settings that you specify for a Container apply only to the individual Container, and they override settings made at the Pod level when there is overlap. Container settings do not affect the Pod's Volumes.
-
-Below is the configuration file for a Pod that has one Container. Both the Pod and the Container have a securityContext field:
-```
-vi security-context-2.yaml
-```
-```yaml
-
-apiVersion: v1
-kind: Pod
-metadata:
-  name: security-context-pod2
-spec:
-  securityContext:
-    runAsUser: 1000
-  containers:
-  - name: sec-ctx-pod2
-    image: gcr.io/google-samples/node-hello:1.0
-    securityContext:
-      runAsUser: 2000
-      allowPrivilegeEscalation: false
-```
-Create the Pod:
-```
-kubectl apply -f security-context-2.yaml
-```
-Verify that the Pod's Container is running:
-```
-kubectl get pod security-context-pod2
-```
-Get a shell into the running Container:
-```
-kubectl exec -it security-context-pod2 -- sh
-```
-In your shell, list the running processes:
-```
-ps aux
-```
-
-The output shows that the processes are running as user 2000. This is the value of runAsUser specified for the Container. It overrides the value 1000 that is specified for the Pod.
-
-## TAsk 3 : Pod & Container Level Security Context
+## Task 2 : Pod & Container Level Security Context
 ```
 vi security-context-new.yaml
 ```
