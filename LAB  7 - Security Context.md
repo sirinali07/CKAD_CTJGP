@@ -4,7 +4,7 @@ A **Security Context** in Kubernetes tells the cluster how a `Pod` or `Container
 
 By default, containers might run as root, which is *risky*.
 
-Security Context helps you:
+#### Security Context helps you:
   * Avoid giving unnecessary permissions
   * Protect your files and data
   * Control how much power your containers have
@@ -16,6 +16,19 @@ You can define a **Security Context** at two levels:
 | Pod level	  |    All containers inside the Pod   |  `spec.securityContext`          |
 | Container level              |       Only that specific container  	 |  `containers[].securityContext`   |
  
+#### ⚙️ Common Security Context Settings
+
+| **Setting** | **Description** | **Example** |
+|--------------|------------------|--------------|
+| `runAsUser` | Runs the container as a specific Linux user ID (not root) | `runAsUser: 1000` |
+| `runAsGroup` | Sets the group ID for files created by the container | `runAsGroup: 3000` |
+| `runAsNonRoot` | Makes sure the container doesn’t run as root | `runAsNonRoot: true` |
+| `readOnlyRootFilesystem` | Makes the container filesystem read-only | `readOnlyRootFilesystem: true` |
+| `allowPrivilegeEscalation` | Prevents a process from gaining more privileges | `allowPrivilegeEscalation: false` |
+| `privileged` | Gives full root access (avoid unless absolutely needed) | `privileged: true` |
+
+
+---
 
 
 ### Task 1: Set the security context for a Pod
