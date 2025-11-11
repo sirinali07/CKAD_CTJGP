@@ -34,29 +34,8 @@ Once a Network Policy is applied, only the **allowed** traffic is permitted; eve
 | `ipBlock` | Allows or denies traffic from specific IP address ranges |
 
 ---
-
-### 🧩 Example: Allow Only Frontend → Backend Traffic
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-frontend-to-backend
-  namespace: default
-spec:
-  podSelector:
-    matchLabels:
-      app: backend
-  policyTypes:
-  - Ingress
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: frontend
-
-
 ---
+
 ### Task 1: Check the network connectivity between pods in different namespaces
 Create 2 namespaces
 ```
@@ -100,7 +79,6 @@ kubectl -n finance exec -it pod2 -- bash
 Curl with the IP address of ng-pod or service of ng-pod
 ```
  curl <IP of the ng-pod>
- 
 ```
 ```
 curl <IP of the ng-pod service>
